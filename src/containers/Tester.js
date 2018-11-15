@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import natural from 'natural';
 import * as tf from '@tensorflow/tfjs';
-import { Button, FormControl, FormGroup } from 'react-bootstrap';
+import { Button, FormControl, FormGroup, Grid, Row, Col } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
 import Loader from 'react-loader-spinner';
@@ -12,10 +12,9 @@ class Tester extends Component {
         training: true,
         testing: false,
         value: "",
-        sentiments: null,
         model: null,
         tokens: null,
-        result: null
+        results: null
     }
 
     async componentDidMount() {
@@ -130,15 +129,39 @@ class Tester extends Component {
             if(res === maxVal)
                 maxId=i;
         });
-        this.setState({testing:false, result: predictedResult});
+
+        const results = this.props.sentiments.map((sentiment, i) => {
+            return {
+                name:sentiment.name,
+                isMax: (maxId===i),
+                result: predictedResult[i]*100
+            }
+        });
+        
+        this.setState({testing:false, results: results});
 
     }
 
     render(){
 
+        let cols = (this.state.results)?(this.state.results.map((res,i) => {
+            return (res.name)?(
+            <Col 
+                md={3} 
+                xs={6} 
+                key={i} 
+                style={{ backgroundColor: (res.isMax) ?"#ccffcc":"#e3e3e3", border:"2px solid #fff", height:"50px", paddingTop:"12px"}}>
+                <span>{res.name} - {res.result.toFixed(2)}</span>
+            </Col>
+        ):null})):null;
+        
         let result = (
             <div style={{textAlign:"center", marginTop:"20px"}}>
-
+                <Grid>
+                    <Row className="show-grid">
+                        {cols}
+                    </Row>
+                </Grid>
             </div>
         );
 
