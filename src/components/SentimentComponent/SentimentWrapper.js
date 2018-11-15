@@ -12,8 +12,8 @@ const cardStyles = {
 }
 
 const cardContentStyles = {
-    backgroundColor: "#aaa1a1",
-    color:"#fff",
+    backgroundColor: "#cdc",
+    color:"#000",
     minWidth: "400px",
     maxWidth: "400px",
     margin: "5px",

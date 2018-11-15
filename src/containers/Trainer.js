@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 import SentimentWrapper from '../components/SentimentComponent/SentimentWrapper';
 import AddSentiment from '../components/SentimentComponent/AddSentiment';
 import SentenceWrapper from '../components/SentenceComponent/SentenceWrapper';
@@ -18,6 +20,13 @@ const styleSentences = {
     display: "flex"
 }
 
+const linkStyle = {
+    color: "white",
+    textDecoration: "none",
+    margin: "5px",
+    marginTop: "20px"
+}
+
 class Trainer extends Component {
     render(){
         return (
@@ -30,7 +39,11 @@ class Trainer extends Component {
                     <SentenceWrapper></SentenceWrapper>
                 </div>
                 <div>
-                    <button>Train</button>
+                    
+                    <Link to='/test' style={linkStyle}>
+                        <Button bsStyle="primary">Train</Button>   
+                    </Link>
+                    
                 </div>
             </div>
         )
