@@ -35,7 +35,7 @@ const formStyle = {
     padding: "auto",
     fontSize: "inherit",
     fontFamily: "inherit",
-    textAlign: "center"
+    textAlign: "center",
 }
 
 
