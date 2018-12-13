@@ -5,6 +5,8 @@
   "dependencies": {
     "@tensorflow/tfjs": "^0.13.4",
     "@tensorflow/tfjs-node": "^0.1.20",
+    "fs": "^0.0.1-security",
+    "isstopword": "^0.0.3",
     "mathjs": "^5.2.3",
     "natural": "^0.6.2",
     "react": "^16.6.1",
@@ -15,7 +17,8 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
     "redux": "^4.0.1",
-    "style-loader": "^0.23.1"
+    "style-loader": "^0.23.1",
+    "synonyms": "^1.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -26,20 +26,21 @@ const sentencesStyles = {
 const sentenceStyle = {
     margin: "5px"
 }
-
 const formStyle = {
     background: "inherit",
     color: "inherit",
     outline: "inherit",
     border: "none",
-    padding: "auto",
+    padding:"5px",
     fontSize: "inherit",
     fontFamily: "inherit",
     textAlign: "center",
 }
 
 
-
+const right = {
+    float:"right",
+}
 class SentenceWrapper extends Component {
     
     handleSubmit = (e) => {
@@ -49,6 +50,9 @@ class SentenceWrapper extends Component {
     handleChange = (e, id, sentimentId) => {
         let sentence = e.target.value;
         this.props.onSentenceUpdated(sentence, id, sentimentId);
+    }
+    deleteSentence = (e,id,sentimentId) => {
+    	this.props.removeSentence(id,sentimentId);
     }
 
     render(){
@@ -63,9 +67,10 @@ class SentenceWrapper extends Component {
                                 type="text"
                                 value={sentence}
                                 placeholder="Add Sentence here"
-                                style={formStyle}
-                                onChange={(e) => this.handleChange(e, id, sentimentId)} />
-                        </form>
+				style={formStyle}
+                                onChange={(e) => this.handleChange(e, id, sentimentId)} />                       
+			    <i className="fa fa-times fa-2x" style={right} onClick={(e) => this.deleteSentence(e,id,sentimentId)} aria-hidden="true"></i>			
+			</form> 
                     </li>
                 )
             });
@@ -99,6 +104,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onSentenceUpdated: (sentence, sentenceId, sentimentId) => dispatch({ type: actionTypes.UPDATE_SENTENCE, sentence: sentence, id: sentenceId, sentimentId: sentimentId }),
+	removeSentence: (sentenceId, sentimentId) => dispatch({ type: actionTypes.REMOVE_SENTENCE,id: sentenceId, sentimentId: sentimentId })
     }
 }
 

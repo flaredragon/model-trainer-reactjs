@@ -28,12 +28,16 @@ const formStyle = {
     color: "inherit",
     outline:"inherit",
     border: "none",
-    padding: "auto",
+    width:"350px",
+    padding:"10px",
     fontSize: "inherit",
     fontFamily: "inherit",
     textAlign: "center"
 }
 
+const right = {
+    align:"right",
+}
 
 class SentimentWrapper extends Component {
 
@@ -45,6 +49,9 @@ class SentimentWrapper extends Component {
     handleChange = (e,i) => {
         let sentiment = e.target.value;
         this.props.onSentimentUpdated(sentiment, i);
+    }
+    deleteSentiment = (e,id) => {
+    	this.props.onSentimentRemoved(id);
     }
 
     render(){
@@ -59,9 +66,11 @@ class SentimentWrapper extends Component {
                             value={this.props.sentiments[i].name} 
                             placeholder="Add Sentiment here"
                             style={formStyle} 
-                            onChange={(e) => this.handleChange(e,i)} />
-                    </form>
+                            onChange={(e) => this.handleChange(e,i)} />                    
+			</form>
                 </span>
+		<i className="fa fa-times fa-2x" style={right} onClick={(e) => this.deleteSentiment(e,i)} aria-hidden="true"></i>		    
+
             </div>
         ));
         return (

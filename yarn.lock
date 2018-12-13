@@ -4068,6 +4068,11 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
 
+fs@^0.0.1-security:
+  version "0.0.1-security"
+  resolved "https://registry.yarnpkg.com/fs/-/fs-0.0.1-security.tgz#8a7bd37186b6dddf3813f23858b57ecaaf5e41d4"
+  integrity sha1-invTcYa23d84E/I4WLV+yq9eQdQ=
+
 fsevents@1.2.4, fsevents@^1.2.2, fsevents@^1.2.3:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-1.2.4.tgz#f41dcb1af2582af3692da36fc55cbd8e1041c426"
@@ -5156,6 +5161,11 @@ isobject@^3.0.0, isobject@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
+
+isstopword@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/isstopword/-/isstopword-0.0.3.tgz#0893dc98c96ff00ea617cff4b5381b3a1b7724d9"
+  integrity sha512-dQ+SWmKMcNUtCavfeilIrEDKBzZIIxjEmYHQGgunBk9SwyEQf+WTjifZ2GzlJKvPmkxaSiZmP2WVieMNXla+ww==
 
 isstream@~0.1.2:
   version "0.1.2"
@@ -9282,6 +9292,11 @@ symbol-tree@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
   integrity sha1-rifbOPZgp64uHDt9G8KQgZuFGeY=
+
+synonyms@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/synonyms/-/synonyms-1.0.1.tgz#e12ce7805918eb99cc3088bcb9a8ecf3e1046966"
+  integrity sha1-4SzngFkY65nMMIi8uajs8+EEaWY=
 
 table@^4.0.3:
   version "4.0.3"
