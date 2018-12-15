@@ -1,6 +1,8 @@
 import * as actionTypes from './actions';
 
 const initialState = {
+    trainStatus:false,
+    editStatus:true,
     sentiments: [
         {
             name: "Happy",
@@ -26,6 +28,7 @@ const reducer = (state = initialState, action) => {
             newSentiments.push(newSentiment);
             return {
                 ...state,
+		editStatus:true,
                 sentiments: newSentiments
             }
         
@@ -34,6 +37,7 @@ const reducer = (state = initialState, action) => {
             newSentiments.splice(action.id, 1);
             return {
                 ...state,
+		editStatus:true,
                 sentiments: newSentiments
             }
 
@@ -42,6 +46,7 @@ const reducer = (state = initialState, action) => {
             newSentiments[action.id].name = action.name;
             return {
                 ...state,
+		editStatus:true,
                 sentiments: newSentiments
             }
 
@@ -53,6 +58,7 @@ const reducer = (state = initialState, action) => {
             newSentiments[action.sentimentId].sentences.push(action.sentence);
             return {
                 ...state,
+		editStatus:true,
                 sentiments: newSentiments
             }
         
@@ -64,6 +70,7 @@ const reducer = (state = initialState, action) => {
             newSentiments[action.sentimentId].sentences[action.id] = action.sentence;
             return {
                 ...state,
+		editStatus:true,
                 sentiments: newSentiments
             }
 
@@ -75,9 +82,24 @@ const reducer = (state = initialState, action) => {
             newSentiments[action.sentimentId].sentences.splice(action.id, 1);
             return {
                 ...state,
+		editStatus:true,
                 sentiments: newSentiments
             }
         
+	case actionTypes.TRAINING_START:
+            return {
+                ...state,
+                trainStatus: true,
+		editStatus:false
+            }
+
+	
+	case actionTypes.TRAINING_END:
+            return {
+                ...state,
+                trainStatus: false
+            }
+
         default:
             return state;
     }

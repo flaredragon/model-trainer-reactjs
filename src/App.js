@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
-
-import Tester from "./containers/Tester";
+import { Row,Col } from 'react-bootstrap';
 import Trainer from "./containers/Trainer";
+import './App.css';
 
 class App extends Component {
   render() {
     return (
-      <BrowserRouter>
-        <div>
-          <Route path="/test" component={Tester} />
-          <Route path="/" exact component={Trainer} />
-        </div>
-      </BrowserRouter>
+        <Row>
+          <Trainer/>
+        </Row>
     );
   }
 }

@@ -7,7 +7,7 @@ const cardStyles = {
     backgroundColor: "#fff",
     minHeight: "60px",
     display: "flex",
-    marginTop: "20px",
+    marginTop: "10px",
     textAlign: "center",
 }
 

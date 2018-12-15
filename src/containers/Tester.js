@@ -1,26 +1,20 @@
 import React, { Component } from 'react';
 import natural from 'natural';
 import * as tf from '@tensorflow/tfjs';
-import { Button, FormControl, FormGroup, Grid, Row, Col } from 'react-bootstrap';
+import { Button, FormControl, FormGroup, Grid, Row, Col,Modal,Alert } from 'react-bootstrap';
 import synonyms from 'synonyms';
 import isSW from 'isstopword';
+import * as actionTypes from '../store/actions';
 import { connect } from 'react-redux';
 import Loader from 'react-loader-spinner';
-//import '../App.css';
-var chartData = {
-		labels: [0,100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500],
-		datasets: [{
-			label: 'My First dataset',
-			pointColor: "rgb(255,0,0,1)",
-			strokeColor: "rgba(255,0,0,1)",
-			data: [1],
-		}]
-	}
-	
-class Tester extends Component {
+import Dygraph from 'dygraphs';
+import '../App.css';
+import dateformat from 'dateformat';
+var g;
 
+class Tester extends Component {
+    
     state={ 
-        training: true,
         testing: false,
         value: "",
         model: null,
@@ -32,11 +26,46 @@ class Tester extends Component {
 	totalEpochs:1500,
 	symArray:[],
 	sentenceUsed:"",
-	words: null
+	words: null,
+	showModal:false,
+	graphData:[[0,1]],
+	accuracy:0.0,
+	lastTrained:"",
+    }
+    componentDidMount() {
+    	this.props.onRef(this);
+    }
+
+    enteringModal = () => {
+	g = new Dygraph(this.refs.graphi,
+		this.state.graphData, {
+                            drawPoints: true,
+                            valueRange: [0.0, 1.2],
+                            labels: ['Epochs', 'Loss'],
+			    ylabel: 'Loss',
+			    xlabel: 'Epochs',
+			    title: 'Metric Graph',
+			    rightGap: 20,
+			    pointSize: 2
+		});
+
+    }
+    componentWillUnmount() {
+    	this.props.onRef(undefined)
     }
     
-    async componentDidMount() {	
+    handleClose = () => {
+    	this.setState({ show: false });
+    }
+
+    handleShow = () => {
+    	this.setState({ show: true });
+    }
+
+    async trainStart() {	
         //Data Preprocessing - Tokenize and Stem
+	this.props.onTrainingStart();
+	this.setState({epochs:0,totalEpochs:1500,loss:0.0,pause:false,model:null,tokens:null,results:null,symArray:[],sentenceUsed:"",words: null,value:"",testing:false,graphData:[[0,1.0]],save:false});	
 	natural.LancasterStemmer.attach();
         const sentimentList = [];
         const sentiments = [];
@@ -121,36 +150,45 @@ class Tester extends Component {
 	    metrics: ["accuracy"]
         })
 	
-	var d = new Date();
-	var n = d.getTime();
+	var d = new Date();	
+	var time = dateformat(d);
+	var n = d.getTime(); 
 	var trainedModel;	
+    	
 	for(var i=1;i<=15;i++){
 	    trainedModel = await model.fit(trainingData, outputData,{epochs:100,shuffle:true});
-	    await this.setState({epochs:100*i,loss:trainedModel.history.loss[99]});
+	    await this.setState({epochs:100*i,loss:trainedModel.history.loss[99],accuracy:trainedModel.history.acc[99],lastTrained:time});
+	    var gD = this.state.graphData;
+	    gD.push([this.state.epochs,this.state.loss]);
+	    await this.setState({graphData:gD});
+            g.updateOptions( { 'file': this.state.graphData } );
 	    if(this.state.pause)
 		{
 		  this.setState({pause:false})
 		  break;
 		}
-	    chartData.datasets[0].data.push(this.state.loss);
+      	    
 	}
 	var d1 = new Date()
 	var n2 = d1.getTime() - n;
-	console.log(trainedModel.history.loss[900],n2);
+	console.log(trainedModel.history.loss[90],n2);
         //Train Neural Net
         //const mjson = model.toJSON(null, false);
-        //console.log(mjson);
-        this.setState({training: false, model:model, tokens: tokens, sentiments:sentiments,words:words});
+        //console.log(mjson);	
+        this.setState({model:model, tokens: tokens, sentiments:sentiments,words:words});
     //console.log(this.state.model);
+	this.props.onTrainingEnd();
     }
 
-    saveModel = async() => {
-        const saveModels = await this.state.model.save('localstorage://my-model-1');
+    saveModel = async(name) => {
+        const saveModels = await this.state.model.save(`localstorage://${name}`);
 	const bagOfWordsData = {
 		tokens:this.state.tokens,
-		sentiments:this.state.sentiments				
+		sentiments:this.props.sentiments,
+		classes:this.state.sentiments				
 	}
 	localStorage.setItem('bowData', JSON.stringify(bagOfWordsData));
+	alert("Model Saved");
     }
 
     handleSubmit = (e) => {
@@ -219,7 +257,7 @@ class Tester extends Component {
 
     testModel = async () => {
 
-        this.setState({testing: true});
+        this.setState({testing: true,value:""});
         natural.LancasterStemmer.attach();
 	await this.addSynonymSentences(this.state.value);
         const sentenceTokens = this.state.sentenceUsed.tokenizeAndStem();
@@ -245,44 +283,13 @@ class Tester extends Component {
             }
         });
         this.setState({testing:false, results: results});
-	console.log(chartData);
     }
 	
     render(){
 	
-	var chartOptions =  {
-		responsive: true,
-		title: {
-			display: this.state.training,
-			text: 'Metric Graph'
-		},
-		tooltips: {
-			mode: 'index',
-			intersect: false,
-		},
-		hover: {
-			mode: 'nearest',
-			intersect: true
-		},
-		scales: {
-			xAxes: [{
-				display: true,
-				ticks: {
-					min: 0,
-            				max: 1500,
-            				stepSize: 100,				
-				}
-			}],
-			yAxes: [{
-				display: true,
-				ticks: {
-        				maxTicksLimit: 5,
-    				}
-			}]
-		},
-	        datasetFill: false
-	}
 	let loss = this.state.loss;
+	let accuracy = this.state.accuracy;
+	let lastTrained = this.state.lastTrained;
 	let epochs = this.state.epochs;
 	let totalEpochs = this.state.totalEpochs;        
 	let cols = (this.state.results)?(this.state.results.map((res,i) => {
@@ -298,35 +305,24 @@ class Tester extends Component {
         
         let result = (
             <div style={{textAlign:"center", marginTop:"20px"}}>
-                <Grid>
                     <Row className="show-grid">
                         {cols}
                     </Row>
-                </Grid>
             </div>
         );
-
-        let trainState = (this.state.training ? <div><Loader type="TailSpin" color="#000" height={80} width={80} /></div> : <div style={{fontSize:"30px"}}>Model Trained!!!<br/><br/></div>);
+	let trainState = (this.props.trainStatus ? <div><Loader type="TailSpin" color="#000" height={80} width={80} /></div> : <div style={{fontSize:"30px"}}>Model Trained!!!<br/><br/></div>);
         let testState = (this.state.testing ? <Loader type="TailSpin" color="#000" height={80} width={80} /> : result);
         let pauseState = (this.state.pause ? <div style={{margin:"10px"}}>Stopping... at {totalEpochs} Epochs</div>:<div style={{margin:"10px"}}></div>);
-	let pauseButton = (this.state.training ? <button onClick={this.pauseModel}>Pause</button>:<div></div>)
+	let pauseButton = (this.props.trainStatus ? <Button onClick={this.pauseModel} className="right" >Stop Training</Button>:<div></div>)
 	let symList = (this.state.symArray.map((symS,i) => 
-		<li key={i} style={{ backgroundColor: (symS===this.state.sentenceUsed) ?"#ccffcc":"#e3e3e3", border:"2px solid #fff", height:"50px", padding:"12px",display:"inline-block"}}>{symS}</li>
+		<li key={i} style={{ backgroundColor: (symS===this.state.sentenceUsed) ?"#ccffcc":"#e3e3e3", border:"2px solid #fff", padding:"12px",display:"inline-block",width:"70%",}}>{symS}</li>
 	));
-
-        return (
-            <div>
-            <button onClick={this.saveModel}>save model</button>
-            <button onClick={this.loadModel}>load model</button>
-	    {pauseButton}
-            <div style={{textAlign:"center", marginTop:"30px"}}>
-                {trainState}
-           <div>{pauseState}</div>
-           <div>Metrics - Epochs : {epochs}/{totalEpochs}  Loss : {loss}</div> 
-	   </div>
-
-            <div style={{textAlign:"center"}}>
-                <form onSubmit={this.handleSubmit} >
+	let classificationDiv = (!this.props.trainStatus&&!this.props.editStatus ?
+	<div  id="sb" className="testwindow" >	
+	<div style={{textAlign:"center",paddingTop:"50px"}} >
+                <h1>Test the Model</h1>
+		<div style={{padding:"10px"}}>Training Results - Last Trained At: {lastTrained} , Accuracy: {accuracy} , Epochs: {epochs}</div>
+		<form onSubmit={this.handleSubmit} >
                     <FormGroup>
                     <FormControl
                         type="text"
@@ -334,11 +330,11 @@ class Tester extends Component {
                         value={this.state.value}
                         placeholder="Add Sentence to test"
                         onChange={this.handleChange} 
-			disabled={this.state.training}
+			disabled={this.props.trainStatus}
 			required />
                     <br />
                     <br />
-                    <Button bsStyle="success" type="submit" disabled={this.state.training}>Classify</Button>
+                    <Button bsStyle="success" type="submit" disabled={this.props.trainStatus}>Classify</Button>
                     </FormGroup>
                 </form>
             </div>
@@ -346,16 +342,47 @@ class Tester extends Component {
 		{symList}
                 {testState}
             </div>
-		
+	</div>	
+	:<div style={{textAlign:"center",fontSize:"30px",paddingTop:"50px"}}><span>You have not Trained yet</span></div>)
+
+        return (
+            <div>
+	      <Col xs={12} md={4}>{classificationDiv}</Col>
+            <Modal show={this.state.show} onEnter={this.enteringModal} bsSize="large">
+          	<Modal.Header>
+              		<Modal.Title>Training Model
+			<Button className="right" onClick={this.handleClose} disabled={this.props.trainStatus}>Close</Button>
+			{pauseButton}
+			</Modal.Title>          	
+		</Modal.Header>          	
+		<Modal.Body>         		
+			<div style={{textAlign:"center", marginTop:"10px"}}>
+                	{trainState}
+           		<div>{pauseState}</div>
+           		<div>Metrics - Epochs : {epochs}/{totalEpochs}  Loss : {loss}</div> 
+			<div style={{width:"50%",margin:"10px auto"}} ref="graphi"></div>			
+			</div>
+          	</Modal.Body>
+            </Modal>
             </div>
         )
     }
 }
 
+
 const mapStateToProps = state => {
     return {
-        sentiments: state.sentiments
+        sentiments: state.sentiments,
+	trainStatus: state.trainStatus,
+	editStatus :state.editStatus
     }
 }
 
-export default connect(mapStateToProps)(Tester);
+const mapDispatchToProps = dispatch => {
+    return {
+	onTrainingEnd: () => dispatch({ type: actionTypes.TRAINING_END}),
+	onTrainingStart: () => dispatch({ type: actionTypes.TRAINING_START}),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tester);

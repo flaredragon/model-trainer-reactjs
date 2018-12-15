@@ -2,6 +2,18 @@
   text-align: center;
 }
 
+html, 
+body,#root,.row{
+    height: 100%;
+    overflow-x:hidden;
+    padding-left:5px;
+    padding-top:5px;
+}
+
+.saveModel{
+   margin-left:20px;
+}
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 40vmin;
@@ -10,7 +22,6 @@
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -30,3 +41,72 @@
     transform: rotate(360deg);
   }
 }
+
+.column {
+  float: left;
+  width: 33.33%;
+}
+
+.overflow{
+overflow:auto;
+}
+
+.testwindow{
+overflow-x:hidden;
+max-height:500px;
+
+}
+
+.heightfill{
+max-height:80%;
+}
+.columnbig {
+  float: left;
+  width: 66.66%;
+}
+
+.sentenceCard{
+overflow:auto;
+max-height:370px;
+min-height:350px;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.trainBtn {
+  position: relative;
+  bottom: 5%;
+  left: 5%;
+}
+
+.right{
+  float:right;
+}
+#sb::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+#sb::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #F5F5F5;
+}
+
+#sb::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+
+.dygraph-legend { text-align: right; }
+.dygraph-title  { text-align: center; }
+.dygraph-xlabel  { text-align: center; }
+.dygraph-ylabel  { text-align: center; }
